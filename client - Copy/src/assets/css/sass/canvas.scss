@@ -1,0 +1,14 @@
+canvas {
+  // border: 1px solid #d5dae2;
+  // border-radius: 3px;
+  flex: none !important;
+  width: 160px !important;
+  height: 45px !important;
+  padding: 0 !important;
+}
+@media (max-width: 575.98px) {
+  canvas {
+    width: 160px !important;
+    height: 45px !important;
+  }
+}
