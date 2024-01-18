@@ -14,10 +14,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     loginSuccess: (state, action) => {
-      let defaultPath = action.payload.roles?.filter(
-        (role) => role.menu
-      )?.[0].path;
-      state.data = {...action.payload,defaultPath};
+      state.data = action.payload;
       state.loading = false;
       state.isAuth = true;
       state.error = "";
@@ -32,17 +29,8 @@ const userSlice = createSlice({
         state.error = "";
       })
       .addCase(login.fulfilled, (state, action) => {
-        const { accessToken, refreshToken, user } = action.payload.data;
-
-        LocalStorageService.setToken({
-          access_token: accessToken,
-          refresh_token: refreshToken,
-        });
-
-        let defaultPath = action.payload.data.user.roles?.filter(
-          (role) => role.menu
-        )?.[0].path;
-        state.data = { ...user, accessToken, refreshToken, defaultPath };
+        LocalStorageService.setToken(action.payload.data.token);
+        state.data = action.payload.data;
         state.loading = false;
         state.isAuth = true;
         state.error = "";

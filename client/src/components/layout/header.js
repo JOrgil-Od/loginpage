@@ -1,6 +1,7 @@
 import { Button, Dropdown } from "antd";
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { UserOutlined } from "@ant-design/icons";
 const items = [
   {
     key: "1",
@@ -31,7 +32,9 @@ function HeaderLayout({ activePath, data, logout }) {
           }}
           placement="bottom"
         >
-          <Button className="user-layout">Ж.Оргил-Од</Button>
+          <Button className="user-layout" icon={<UserOutlined />}>
+            Ж.Оргил-Од
+          </Button>
         </Dropdown>
       </div>
     </header>

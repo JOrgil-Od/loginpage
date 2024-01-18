@@ -9,16 +9,7 @@ const NotFound = () => {
     <Result
       status="403"
       title="403"
-      subTitle=<div>
-        Хандах эрх байхгүй байна. НРП хэлтсийн аргазүйч-санхүүч ноён
-        <a
-          href="https://www.facebook.com/baterdene.begzsuren"
-          target={"_blank"}
-        >
-          <span className="text-uppercase"> Б*т-Э*д*н* тэй</span>
-        </a>{" "}
-        холбогдоно уу.
-      </div>
+      subTitle=<div>Хандах эрх байхгүй байна.</div>
       extra={
         <NavLink
           to={loggedUser.isAuth ? `${loggedUser.data.defaultPath}` : "/login"}

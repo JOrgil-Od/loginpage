@@ -25,7 +25,7 @@ function Login() {
   if (loggedUser.isAuth) {
     return <Navigate to={"/profile"} />;
   } else {
-    if (LocalStorageService.getAccessToken() !== null) {
+    if (LocalStorageService.getToken() !== null) {
       axios
         .get("/users/currentUser")
         .then((result) => {

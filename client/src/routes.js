@@ -6,19 +6,32 @@ import Page403 from "./pages/403";
 import Users from "./pages/users";
 import Profile from "./pages/profile";
 import Login from "./pages/login";
+import ProtectedRoutes from "./helpers/protectedRoute";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <MainLayout />,
+    element: (
+      <ProtectedRoutes>
+        <MainLayout />
+      </ProtectedRoutes>
+    ),
     children: [
       {
         path: "users",
-        element: <Users />,
+        element: (
+          <ProtectedRoutes>
+            <Users />
+          </ProtectedRoutes>
+        ),
       },
       {
         path: "profile",
-        element: <Profile />,
+        element: (
+          <ProtectedRoutes>
+            <Profile />
+          </ProtectedRoutes>
+        ),
       },
     ],
   },
