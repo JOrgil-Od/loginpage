@@ -19,6 +19,6 @@ router
   .put(protect, updateUser)
   .delete(protect, deleteUser);
 router.route("/login").post(loginUser);
-router.route("/currentUser").post(protect, currentUser );
+router.route("/current/user").get(protect, currentUser);
 
 module.exports = router;

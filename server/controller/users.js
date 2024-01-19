@@ -64,14 +64,10 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
 
 //current user
 exports.currentUser = asyncHandler(async (req, res, next) => {
-
-  console.log("\n\n\nCURRENT USER:" + req)
-
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.user.id);
 
   res.status(200).json({
-    today: formatDate(),
     success: true,
-    user,
+    data: user,
   });
 });

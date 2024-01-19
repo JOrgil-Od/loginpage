@@ -14,10 +14,10 @@ const ProtectedRoutes = ({ children }) => {
   } else {
     if (LocalStorageService.getToken() !== null) {
       tokenAxios
-        .get(`/users/currentUser`)
+        .get(`/users/current/user`)
         .then((res) => {
           if (res.status === 200 && res.data.success) {
-            dispatch(loginSuccess({ ...res.data.user }));
+            dispatch(loginSuccess({ ...res.data }));
           } else {
             LocalStorageService.clearToken();
             window.location.href = `/login`;
