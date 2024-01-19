@@ -7,15 +7,22 @@ import {
   Select,
   Table,
   Typography,
+  notification,
 } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { apiUrl } from "../../constants/defaultValues";
 import myAxios from "../../helpers/tokenAxios";
 
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import ButtonGroup from "antd/es/button/button-group";
 
+const Context = React.createContext({
+  name: "Default",
+});
 const Users = () => {
+  const [api, contextHolder] = notification.useNotification();
+
+  const { Text } = Typography;
   const columns = [
     {
       title: "Нэр",
@@ -42,19 +49,20 @@ const Users = () => {
             icon={<EditOutlined />}
             onClick={() => {
               clickUpdateData(record);
-            }}
-          ></Button>
+            }}></Button>
           <Button
             icon={<DeleteOutlined />}
             onClick={() => {
               clickDeleteData(record);
-            }}
-          ></Button>
+            }}></Button>
         </ButtonGroup>
       ),
     },
   ];
+
   const [mainData, setMainData] = useState([]);
+  const [tableData, setTableData] = useState([]);
+  const [search, setSearch] = useState("");
   const [formData, setFormData] = useState({
     type: "add",
     name: "",
@@ -82,10 +90,10 @@ const Users = () => {
   const clickUpdateData = (val) => {
     setFormData({
       type: "edit",
+      _id: val._id,
       name: val.name,
       email: val.email,
       role: val.role,
-      password: val.password,
     });
     setIsModalOpen(true);
   };
@@ -94,59 +102,110 @@ const Users = () => {
       myAxios
         .post(`${apiUrl}/users`, formData)
         .then((res) => {
-          console.log("res", res);
+          setMainData((prev) => [...prev.reverse(), res.data.data].reverse());
+          api.success({
+            message: `Амжилттай`,
+            description: `Шинэ хэрэглэгч амжилттай хадгалагдлаа!`,
+            placement: "topRight",
+          });
         })
         .catch((err) => {
-          console.log(err);
+          api.error({
+            message: `Амжилтгүй`,
+            description: `${err}!`,
+            placement: "topRight",
+          });
         });
     } else {
       myAxios
-        .put(`${apiUrl}/users`, formData)
+        .put(`${apiUrl}/users/${formData._id}`, formData)
         .then((res) => {
-          console.log("res", res);
+          setMainData((prev) =>
+            prev.map((dt) => {
+              if (dt._id === res.data.data._id) {
+                return formData;
+              } else {
+                return dt;
+              }
+            })
+          );
+          api.info({
+            message: `Амжилттай`,
+            description: `Хэрэглэгчийн мэдээлэл амжилттай солив!`,
+            placement: "topRight",
+          });
         })
         .catch((err) => {
-          console.log(err);
+          api.error({
+            message: `Амжилтгүй`,
+            description: `${err}!`,
+            placement: "topRight",
+          });
         });
     }
     setIsModalOpen(false);
   };
   const clickDeleteData = (val) => {
-    myAxios
-      .delete(`${apiUrl}/users/${val.id}`)
-      .then((res) => {
-        console.log(res);
-        console.log(res);
-      })
-      .catch((err) => console.log(err));
     console.log("delete", val);
+    myAxios
+      .delete(`${apiUrl}/users/${val._id}`)
+      .then((res) => {
+        setMainData((prev) =>
+          prev.filter((dt) => dt._id !== res.data.data._id)
+        );
+        api.warning({
+          message: `Амжилттай`,
+          description: `Хэрэглэгчийн мэдээлэл амжилттай устгалаа!`,
+          placement: "topRight",
+        });
+      })
+      .catch((err) => {
+        api.error({
+          message: `Амжилтгүй`,
+          description: `${err}!`,
+          placement: "topRight",
+        });
+      });
   };
   useEffect(() => {
     myAxios
       .get(`${apiUrl}/users`)
-      .then((res) => setMainData(res.data.data))
+      .then((res) => {setMainData(res.data.data); setTableData(res.data.data)})
       .catch((err) => {
         console.log(err);
       });
   }, []);
+  
+  //search hiih heseg
+  useEffect(() => {
+    let tempArr = mainData.filter((dt) => {
+      if (
+        dt.name.toUpperCase().indexOf(search.toUpperCase()) !== -1 ||
+        dt.email.toUpperCase().indexOf(search.toUpperCase()) !== -1 
+      ) {
+        return dt;
+      }
+    });
+    setTableData(tempArr);
+  }, [search]);
   return (
     <div>
+      {contextHolder}
       <Modal
         title="Хэрэглэгчийн мэдээлэл"
         open={isModalOpen}
         onOk={handleOk}
-        onCancel={() => setIsModalOpen(false)}
-      >
+        onCancel={() => setIsModalOpen(false)}>
         <Row gutter={16}>
           <Col span={12}>
-            <Typography.Title level={5}>Хэрэглэгчийн нэр</Typography.Title>
+            <Text type="secondary">Хэрэглэгчийн нэр</Text>
             <Input
               value={formData.name}
               onChange={(e) => handleFormData("name", e.target.value)}
             />
           </Col>
           <Col span={12}>
-            <Typography.Title level={5}>Имэйл хаяг</Typography.Title>
+            <Text type="secondary">Имэйл хаяг</Text>
             <Input
               value={formData.email}
               onChange={(e) => handleFormData("email", e.target.value)}
@@ -155,7 +214,7 @@ const Users = () => {
         </Row>
         <Row gutter={16}>
           <Col span={12}>
-            <Typography.Title level={5}>Хандах эрх</Typography.Title>
+            <Text type="secondary">Хандах эрх</Text>
             <Select
               defaultValue="user"
               value={formData.role}
@@ -167,13 +226,15 @@ const Users = () => {
               ]}
             />
           </Col>
-          <Col span={12}>
-            <Typography.Title level={5}>Нууц үг</Typography.Title>
-            <Input
-              value={formData.password}
-              onChange={(e) => handleFormData("password", e.target.value)}
-            />
-          </Col>
+          {formData.type === "add" && (
+            <Col span={12}>
+              <Text type="secondary">Нууц үг</Text>
+              <Input
+                value={formData.password}
+                onChange={(e) => handleFormData("password", e.target.value)}
+              />
+            </Col>
+          )}
         </Row>
       </Modal>
       <div
@@ -181,14 +242,13 @@ const Users = () => {
           display: "flex",
           justifyContent: "space-between",
           marginBottom: "20px",
-        }}
-      >
-        <Input placeholder="Хайлт" style={{ width: "500px" }} />
+        }}>
+        <Input placeholder="Хайлт" value={search} onChange={(e)=>{setSearch(e.target.value)}} style={{ width: "500px" }} />
         <Button type="primary" onClick={() => clickSaveData()}>
           Нэмэх
         </Button>
       </div>
-      <Table dataSource={mainData} columns={columns} />
+      <Table dataSource={tableData} columns={columns} />
     </div>
   );
 };

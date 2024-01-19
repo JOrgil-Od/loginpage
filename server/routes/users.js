@@ -7,6 +7,7 @@ const {
   updateUser,
   deleteUser,
   loginUser,
+  currentUser,
 } = require("../controller/users");
 
 const router = express.Router();
@@ -18,6 +19,6 @@ router
   .put(protect, updateUser)
   .delete(protect, deleteUser);
 router.route("/login").post(loginUser);
-router.route("/currentUser").post();
+router.route("/currentUser").post(protect, currentUser );
 
 module.exports = router;

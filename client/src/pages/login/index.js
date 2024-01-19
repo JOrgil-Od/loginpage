@@ -5,14 +5,14 @@ import { loginSuccess } from "../../redux/auth/authSlice";
 import { Navigate } from "react-router-dom";
 import LocalStorageService from "../../helpers/LocalStorageService";
 import axios from "../../helpers/tokenAxios";
-import { Button, Input } from "antd";
+import { Button, Input, Typography } from "antd";
 
 function Login() {
   const dispatch = useDispatch();
   const loggedUser = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: "admin@gmail.com",
+    password: "admin",
   });
 
   const handleInputChange = (name, value) => {
@@ -43,7 +43,7 @@ function Login() {
     }
   }
   return (
-    <div style={{ height: "100vh", backgroundColor: "#e4f3f2" }}>
+    <div style={{ height: "100vh", backgroundColor: "#fff" }}>
       <div
         style={{
           display: "flex",
@@ -51,14 +51,6 @@ function Login() {
           paddingTop: "300px",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            backgroundColor: "#fff",
-            borderRadius: "10px",
-          }}
-        ></div>
         <form
           onSubmit={handleSubmit}
           style={{
@@ -69,27 +61,21 @@ function Login() {
             padding: "40px",
           }}
         >
+        <Typography.Title level={5}>Нэвтрэх нэр</Typography.Title>
           <Input
-            id="standard-basic"
-            label="Нэвтрэх нэр"
-            variant="standard"
-            sx={{ m: 1, mt: 4, width: "300px" }}
+            style={{marginBottom:"15px"}}
             value={formData.email}
             onChange={(e) => handleInputChange("email", e.target.value)}
-          />
+            />
+          <Typography.Title level={5}>Нууц үг</Typography.Title> 
           <Input
-            id="standard-basic"
-            label="Нууц үг"
+            style={{marginBottom:"15px"}}
             type="password"
-            variant="standard"
-            sx={{ m: 1, width: "300px" }}
             value={formData.password}
             onChange={(e) => handleInputChange("password", e.target.value)}
           />
           <Button
-            variant="contained"
-            size="small"
-            sx={{ marginTop: "40px", width: "120px" }}
+            style={{ marginTop: "20px", width: "120px", border: "1px solid #eee" }}
             onClick={handleSubmit}
             type="submit"
           >

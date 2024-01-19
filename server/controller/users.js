@@ -61,3 +61,17 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({ success: true, data: user, token: user.getJWT() });
 });
+
+//current user
+exports.currentUser = asyncHandler(async (req, res, next) => {
+
+  console.log("\n\n\nCURRENT USER:" + req)
+
+  const user = await User.findById(req.params.id);
+
+  res.status(200).json({
+    today: formatDate(),
+    success: true,
+    user,
+  });
+});

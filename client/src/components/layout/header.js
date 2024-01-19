@@ -2,6 +2,7 @@ import { Button, Dropdown } from "antd";
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { UserOutlined } from "@ant-design/icons";
+import { useSelector } from "react-redux";
 const items = [
   {
     key: "1",
@@ -13,6 +14,7 @@ const items = [
   },
 ];
 function HeaderLayout({ activePath, data, logout }) {
+  const loggedUser = useSelector((state) => state.user.data.data);
   return (
     <header className="header-layout">
       <div className="menu-layout">
@@ -33,7 +35,7 @@ function HeaderLayout({ activePath, data, logout }) {
           placement="bottom"
         >
           <Button className="user-layout" icon={<UserOutlined />}>
-            Ж.Оргил-Од
+          {loggedUser.name}
           </Button>
         </Dropdown>
       </div>
